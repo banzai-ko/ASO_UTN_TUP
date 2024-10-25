@@ -1,0 +1,61 @@
+Vagrant.configure("2") do |config|
+  config.ssh.insert_key = false
+
+  # Puppet1 configuration
+  config.vm.define "Puppet1" do |puppet1|
+    puppet1.vm.box = "ubuntu/jammy64"
+    puppet1.vm.hostname = "Puppet1"
+    puppet1.vm.network "private_network", ip: "192.168.56.3"
+    puppet1.vm.network "forwarded_port", guest: 22, host: 8023
+    puppet1.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "P1"
+      vb.cpus = 1
+      vb.linked_clone = true
+    end
+    puppet1.vm.provision "shell", path: "ssh_key_access.sh"
+    puppet1.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y ansible
+    SHELL
+  end
+
+  # Puppet2 configuration
+  config.vm.define "Puppet2" do |puppet2|
+    puppet2.vm.box = "ubuntu/jammy64"
+    puppet2.vm.hostname = "Puppet2"
+    puppet2.vm.network "private_network", ip: "192.168.56.4"
+    puppet2.vm.network "forwarded_port", guest: 22, host: 8024
+    puppet2.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "P2"
+      vb.cpus = 1
+      vb.linked_clone = true
+    end
+    puppet2.vm.provision "shell", path: "ssh_key_access.sh"
+    puppet2.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y ansible
+    SHELL
+  end
+
+  # Puppet3 configuration
+  config.vm.define "Puppet3" do |puppet3|
+    puppet3.vm.box = "ubuntu/jammy64"
+    puppet3.vm.hostname = "Puppet3"
+    puppet3.vm.network "private_network", ip: "192.168.56.5"
+    puppet3.vm.network "forwarded_port", guest: 22, host: 8025
+    puppet3.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.name = "P3"
+      vb.cpus = 1
+      vb.linked_clone = true
+    end
+    puppet3.vm.provision "shell", path: "ssh_key_access.sh"
+    puppet3.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get install -y ansible
+    SHELL
+  end
+end
+

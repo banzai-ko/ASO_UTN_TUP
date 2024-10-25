@@ -1,0 +1,36 @@
+---
+- name: Install tools and copy configuration files
+  hosts: servers
+  become: yes  # Ensures commands run with sudo
+
+  vars:
+    packages:
+      - vim
+      - tmux
+      - curl
+      - wget
+      - screen
+    user_home: "/home/vagrant"
+
+  tasks:
+    - name: Ensure required packages are installed
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes  # Updates the apt cache before installing
+
+    - name: Gather OS release information
+      slurp:
+        src: /etc/os-release
+      register: os_release
+
+    - name: Create a file with system information
+      copy:
+        dest: "{{ user_home }}/system_info.txt"
+        content: |
+          Date: {{ ansible_date_time.iso8601 }}
+          Hostname: {{ ansible_hostname }}
+          Kernel Version: {{ ansible_kernel }}
+          OS Release:
+          {{ os_release.content | b64decode | regex_replace('^', '  ') }}
+
